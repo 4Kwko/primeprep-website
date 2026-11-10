@@ -1,0 +1,445 @@
+/* =============================================================================
+   PRIME PREP — DESIGN TOKENS
+   Camada 1: primitivas (valores brutos, nunca usadas direto em componentes)
+   Camada 2: tokens semânticos (o que os componentes consomem)
+   Camada 3: escopos de superfície (data-surface) que trocam a camada 2
+   Documentação: docs/setup/design-system-foundation.md
+   ========================================================================== */
+
+@theme {
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — COR
+     Sistema policromático. O navy é a âncora, não a totalidade.
+     A harmonia é: azul profundo (autoridade) + pergaminho quente (leitura)
+     + ouro (mérito) + bordô heráldico (tradição) + azuis de arma (contexto).
+     --------------------------------------------------------------------- */
+
+  /* Navy — cor-marca */
+  --color-navy-50: #eef2fa;
+  --color-navy-100: #d6dff1;
+  --color-navy-200: #adbde2;
+  --color-navy-300: #7b91c7;
+  --color-navy-400: #4d64a1;
+  --color-navy-500: #1c3572;
+  --color-navy-600: #0f2350; /* NAVY PRIME — cor institucional */
+  --color-navy-700: #0c1c40;
+  --color-navy-800: #091531;
+  --color-navy-900: #060e21;
+
+  /* Ink — azul-preto para seções de contraste máximo */
+  --color-ink-500: #0d1526;
+  --color-ink-600: #0a0f1c;
+  --color-ink-700: #06090f;
+
+  /* Bone — pergaminho quente. É o que impede o site de ficar frio/monocromático */
+  --color-bone-50: #fbfaf6;
+  --color-bone-100: #f6f3ec;
+  --color-bone-200: #ece7db;
+  --color-bone-300: #ddd5c3;
+  --color-bone-400: #c4b9a1;
+
+  /* Gold — acento de mérito, distinção, conquista */
+  --color-gold-200: #efe0b8;
+  --color-gold-300: #e0c98a;
+  --color-gold-400: #d3b263;
+  --color-gold-500: #c8a24b; /* GOLD PRIME */
+  --color-gold-600: #a9852f;
+  --color-gold-700: #83661f;
+  /* Só existe para `prefers-contrast: more`. Sobre pergaminho o ouro-700 dá
+     4,88:1, que passa em AA e não em AAA, e era o único par do site abaixo de
+     7:1 quando alguém pede mais contraste. Este dá 7,16. Não é cor nova de
+     marca: é o mesmo tom da rampa, escurecido. */
+  --color-gold-800: #644e18;
+
+  /* Bordô — vive APENAS como cor de contexto da EsPCEx (`--color-arma-cadete`).
+     Não há alias semântico `--color-secondary`: ele existia sem nenhum uso na
+     UI, e paleta que declara cor que não aparece na tela infla o inventário
+     sem servir a nada (R-29). O primitivo fica porque a EsPCEx usa. */
+  --color-crimson-200: #f0cdd2;
+  --color-crimson-400: #b8515f;
+  --color-crimson-500: #8e2f3c;
+  --color-crimson-600: #72212c;
+
+  /* Steel — neutro frio para texto secundário e bordas sobre escuro */
+  --color-steel-200: #c3ccdd;
+  --color-steel-300: #9dabc5;
+  --color-steel-400: #7787a6;
+  --color-steel-500: #5b6b8c;
+  --color-steel-600: #44526e;
+
+  /* Cores de contexto por força/escola — derivadas das instituições reais.
+     Codificam concursos; nunca são decoração livre.
+     Estes são os valores para SUPERFÍCIE CLARA. Cada escopo de superfície
+     escuro redefine os mesmos nomes com variantes claras (camada 3), então
+     `var(--color-arma-*)` sempre atinge AA onde estiver. */
+  --color-arma-marinha: #1b5e72; /* EFOMM — Marinha Mercante */
+  --color-arma-aero: #1f6fa8; /* AFA — Aeronáutica */
+  --color-arma-aero-light: #26708f; /* EEAR — Aeronáutica */
+  --color-arma-exercito: #4e6a45; /* reservado — ESA, fora do site por ora */
+  --color-arma-cadete: #8e2f3c; /* EsPCEx — Exército */
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — TIPOGRAFIA
+     3 famílias, 3 papéis distintos. Ver docs/setup/typography.md
+     --------------------------------------------------------------------- */
+  --font-inscription: var(--font-cinzel), "Times New Roman", serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  /* Família própria para o itálico: ela é carregada separadamente e sem
+     precarga (ver fonts.ts). Apontar para `--font-display` faria o navegador
+     sintetizar um itálico falso a partir do romano. */
+  --font-display-italico: var(--font-fraunces-italico), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Escala tipográfica fluida — clamp() em vez de breakpoints manuais.
+     Razão ~1.25 no mobile, ~1.333 no desktop (a hierarquia abre no desktop). */
+  --text-caption: clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);
+  --text-label: clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem);
+  --text-body-sm: clamp(0.9375rem, 0.92rem + 0.12vw, 1rem);
+  --text-body: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
+  --text-body-lg: clamp(1.125rem, 1.07rem + 0.28vw, 1.3125rem);
+  --text-h4: clamp(1.25rem, 1.17rem + 0.4vw, 1.5rem);
+  --text-h3: clamp(1.5rem, 1.34rem + 0.8vw, 2rem);
+  --text-h2: clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --text-h1: clamp(2.5rem, 1.95rem + 2.75vw, 4.25rem);
+  --text-display: clamp(3rem, 2.05rem + 4.75vw, 6rem);
+
+  --tracking-inscription: 0.18em;
+  --tracking-label: 0.14em;
+  --tracking-tight: -0.02em;
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — ESPAÇO
+     Base 4px. Nenhum valor arbitrário deve aparecer em componentes.
+     --------------------------------------------------------------------- */
+  --spacing: 0.25rem; /* Tailwind gera p-1..p-96 a partir daqui */
+
+  /* Ritmo vertical entre seções — fluido, três intensidades */
+  --space-section-sm: clamp(3rem, 2.4rem + 3vw, 4.5rem);
+  --space-section: clamp(4.5rem, 3.3rem + 6vw, 8rem);
+  --space-section-lg: clamp(6rem, 4.2rem + 9vw, 11rem);
+
+  /* Containers.
+     ATENÇÃO: o namespace `--container-*` do Tailwind v4 gera utilitários
+     `w-<nome>`, `max-w-<nome>` e `min-w-<nome>`. Um token chamado `full`
+     SOBRESCREVE o `w-full` nativo (100%) — bug real que já valeu 96rem em vez
+     de 100% e cortou layout em dois lugares. Nunca nomear um container com o
+     nome de um utilitário existente (`full`, `screen`, `min`, `max`, `fit`,
+     `auto`, `px`). */
+  --container-content: 68rem;
+  --container-wide: 82rem;
+
+  /* Gutter lateral responsivo */
+  --gutter: clamp(1.25rem, 0.9rem + 1.75vw, 2.5rem);
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — FORMA
+     Raio contido. Nada de pill/blob. Cartão institucional, não SaaS.
+     --------------------------------------------------------------------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — SOMBRA
+     Sistema HÍBRIDO, tátil por decisão (ver DESIGN.md § Elevation & Depth).
+     A estrutura vem de borda + valor de fundo; a resposta física vem de sombra.
+     Sombra comunica ESTADO, nunca hierarquia. Sempre tingida de navy — cinza
+     puro lê como interface genérica, não como papel.
+     --------------------------------------------------------------------- */
+  --shadow-hairline: 0 0 0 1px color-mix(in oklab, var(--color-navy-600) 12%, transparent);
+  /* contato: a sombra curta e escura que "assenta" o objeto na superfície */
+  --shadow-contact: 0 1px 2px rgba(9, 21, 49, 0.1);
+  --shadow-raise: 0 1px 2px rgba(9, 21, 49, 0.06), 0 8px 24px -12px rgba(9, 21, 49, 0.18);
+  --shadow-lift: 0 2px 4px rgba(9, 21, 49, 0.08), 0 20px 48px -20px rgba(9, 21, 49, 0.28);
+  /* flutuante: contato curto + difusa muito larga. É o par que cria distância
+     real do fundo sem virar cartão de dashboard. */
+  --shadow-float:
+    0 1px 2px rgba(9, 21, 49, 0.12), 0 4px 10px -4px rgba(9, 21, 49, 0.14),
+    0 32px 64px -28px rgba(9, 21, 49, 0.38);
+  /* overlay: painéis que cobrem conteúdo (menu mobile) */
+  --shadow-overlay: 0 24px 64px -12px rgba(6, 14, 33, 0.55);
+  --shadow-press: 0 1px 0 rgba(9, 21, 49, 0.2);
+  /* SOMBRA POR SUPERFÍCIE: os valores acima são calibrados para pergaminho.
+     Em navy e ink uma sombra tingida de navy é invisível (fundo e sombra têm
+     quase a mesma luminância), então lá a profundidade vem primeiro de
+     ELEVAÇÃO TONAL e só depois de sombra, que passa a ser quase preta.
+     Cada escopo de superfície redefine estes mesmos nomes na camada 3. */
+  --shadow-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — PLANOS (profundidade)
+     Três planos conceituais. Ver DESIGN.md § Depth & Layers.
+     O z-index é escala, não número mágico espalhado pelo código.
+     --------------------------------------------------------------------- */
+  --layer-fundo: 0; /* campo gráfico, gradientes, textura */
+  --layer-meio: 1; /* ornamento, marca d'água, filetes */
+  --layer-frente: 2; /* conteúdo: título, texto, CTA, tabela */
+  --layer-flutuante: 3; /* painel que atravessa a costura entre seções */
+  --layer-header: 50;
+
+  /* ---------------------------------------------------------------------
+     PRIMITIVAS — MOTION
+     Curtas, decididas, sem bounce. Ver docs/setup/design-system-foundation.md
+     --------------------------------------------------------------------- */
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --duration-instant: 90ms;
+  --duration-fast: 160ms;
+  --duration-base: 260ms;
+  --duration-slow: 420ms;
+  --duration-reveal: 640ms;
+
+  /* Deslocamento padrão de entrada — sutil, nunca "voando" */
+  --motion-rise: 14px;
+  --motion-stagger: 60ms;
+
+  /* PARALAXE — curso vertical de cada plano ao longo da janela.
+     Estes são o vocabulário de profundidade em movimento: planos diferentes
+     percorrem distâncias diferentes enquanto a mesma seção passa pela tela, e é
+     essa diferença (não a distância em si) que o olho lê como distância física.
+     Valores pequenos de propósito: acima de ~120px o efeito deixa de ser
+     profundidade e vira elemento voando pela tela. O plano de conteúdo NUNCA
+     recebe paralaxe, senão o texto passa a andar sozinho durante a leitura. */
+  --parallax-fundo: 40px; /* campo gráfico: quase parado, é o mais distante */
+  --parallax-meio: 96px; /* marca d'água e ornamento de grande escala */
+  --parallax-marca: 120px; /* marca d'água que sangra pela borda */
+  --parallax-contra: -56px; /* numeral de registro: anda ao contrário */
+  --parallax-frente: -32px; /* painel do hero: anda contra, logo parece à frente */
+}
+
+/* =============================================================================
+   CAMADA 2 — TOKENS SEMÂNTICOS (valores padrão = superfície PERGAMINHO)
+   Componentes só consomem estes nomes.
+
+   CONTRASTE: `--color-fg-subtle` carrega TEXTO de verdade (rótulos de seção,
+   cabeçalho de tabela, legendas), não apenas elementos decorativos. Por isso ele
+   é calibrado para ≥4.5:1 em cada superfície — não para os 3:1 de elemento
+   gráfico. Auditoria da Etapa 3 pegou 20 nós reprovando AA com os valores
+   anteriores (4.11 / 4.21 / 3.58).
+
+   ARQUITETURA — por que `@theme` e não `@theme inline`:
+   com `@theme` normal, o utilitário `bg-canvas` compila para
+   `background-color: var(--color-canvas)`, e a variável é resolvida NO ELEMENTO.
+   Isso é o que permite que `[data-surface="navy"]` redefina `--color-canvas` e
+   toda a subárvore mude de tema. Com `@theme inline` a resolução aconteceria no
+   `:root` e os escopos não trocariam nada em CSS puro — armadilha já verificada.
+   Consequência prática: existe UM nome por token, válido tanto em utilitário
+   Tailwind quanto em `var()` escrito à mão.
+   ========================================================================== */
+
+@theme {
+  --color-canvas: var(--color-bone-100);
+  --color-canvas-alt: var(--color-bone-50);
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-sunken: var(--color-bone-200);
+
+  --color-fg: var(--color-navy-700);
+  --color-fg-muted: #414d6b;
+  --color-fg-subtle: #5c6880;
+  --color-fg-inverse: var(--color-bone-50);
+
+  --color-border: var(--color-bone-300);
+  --color-border-strong: var(--color-navy-200);
+  --color-hairline: rgba(15, 35, 80, 0.14);
+
+  --color-primary: var(--color-navy-600);
+  --color-primary-hover: var(--color-navy-500);
+  --color-primary-fg: var(--color-bone-50);
+
+  /* Sobre pergaminho o ouro precisa do tom escuro para atingir AA em texto. */
+  --color-accent: var(--color-gold-700);
+  --color-accent-hover: var(--color-gold-600);
+  --color-accent-fg: var(--color-navy-800);
+  --color-accent-quiet: var(--color-gold-200);
+
+  --color-focus: var(--color-navy-500);
+}
+
+/* =============================================================================
+   CAMADA 3 — ESCOPOS DE SUPERFÍCIE
+   Cada bloco redefine a camada 2 para a sua subárvore. Superfícies podem ser
+   aninhadas: um bloco `bone` dentro de um `navy` volta ao tema claro.
+   ========================================================================== */
+
+/* --- PERGAMINHO: leitura longa. É o padrão do documento. ------------------ */
+[data-surface="bone"] {
+  /* Barra de rolagem: polegar e trilho na cor da superfície. Ver `base.css`. */
+  --rolagem-polegar: color-mix(in oklab, var(--color-navy-600) 32%, transparent);
+  --rolagem-trilho: color-mix(in oklab, var(--color-navy-600) 7%, transparent);
+
+  /* SEM LUZ DE CIMA NO PERGAMINHO, e isso foi corrigido depois de ver.
+     Numa superfície quase branca a luz não acrescenta quase nada, e o pouco que
+     acrescenta BRIGA com a costura: o topo da folha ficava mais claro justamente
+     onde a folha de cima deveria estar projetando sombra. Simulado lado a lado
+     com os valores reais, a versão sem luz é a que lê como papel empilhado.
+     A luz continua em navy e ink, onde superfície escura de fato ganha com ela. */
+
+  /* COSTURA. A folha de cima projeta na de baixo. Ver `base.css`. Sobre
+     pergaminho a projeção é quente, para não virar cinza fotográfico. */
+  --costura-linha: color-mix(in oklab, var(--color-navy-600) 14%, transparent);
+  --costura-sombra: color-mix(in oklab, var(--color-navy-600) 30%, transparent);
+
+  /* GRÃO DE PAPEL. Ver a nota em `base.css` e o gerador em
+     `scripts/gerar-assets-marca.mjs`. Dois arquivos porque `overlay` amplifica
+     muito mais sobre fundo escuro: o mesmo ruído que dá grão discreto no
+     pergaminho vira sujeira visível no navy. */
+  --textura-superficie: url("/assets/textura/grao-claro.png");
+
+  --color-canvas: var(--color-bone-100);
+  --color-canvas-alt: var(--color-bone-50);
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-sunken: var(--color-bone-200);
+
+  --color-fg: var(--color-navy-700);
+  --color-fg-muted: #414d6b;
+  --color-fg-subtle: #5c6880;
+  --color-fg-inverse: var(--color-bone-50);
+
+  --color-border: var(--color-bone-300);
+  --color-border-strong: var(--color-navy-200);
+  --color-hairline: rgba(15, 35, 80, 0.14);
+
+  --color-primary: var(--color-navy-600);
+  --color-primary-hover: var(--color-navy-500);
+  --color-primary-fg: var(--color-bone-50);
+
+  --color-accent: var(--color-gold-700);
+  --color-accent-hover: var(--color-gold-600);
+  --color-accent-fg: var(--color-navy-800);
+  --color-accent-quiet: var(--color-gold-200);
+
+  --color-focus: var(--color-navy-500);
+
+  color-scheme: light;
+}
+
+/* --- NAVY: hero, faixas de afirmação, footer ----------------------------- */
+[data-surface="navy"] {
+  --rolagem-polegar: color-mix(in oklab, var(--color-bone-50) 26%, transparent);
+  --rolagem-trilho: color-mix(in oklab, #030712 26%, transparent);
+
+  /* Em navy a luz é o que mais rende: superfície escura é onde um gradiente de
+     iluminação some de sutil para presente. Ainda assim, 5% no topo. */
+  --luz-superficie: linear-gradient(
+    to bottom,
+    color-mix(in oklab, white 5%, transparent),
+    transparent 45%
+  );
+
+  /* Em navy a projeção é quase preta, pela mesma razão da D-34: sombra tingida
+     de navy sobre navy é invisível. */
+  --costura-linha: color-mix(in oklab, #030712 45%, transparent);
+  --costura-sombra: color-mix(in oklab, #030712 62%, transparent);
+
+  --textura-superficie: url("/assets/textura/grao-escuro.png");
+
+  --color-canvas: var(--color-navy-600);
+  --color-canvas-alt: var(--color-navy-700);
+  --color-surface: #16295c;
+  --color-surface-elevated: var(--color-navy-500);
+  --color-surface-sunken: var(--color-navy-700);
+
+  --color-fg: var(--color-bone-50);
+  --color-fg-muted: var(--color-steel-200);
+  --color-fg-subtle: #9caac3;
+  --color-fg-inverse: var(--color-navy-700);
+
+  --color-border: rgba(195, 204, 221, 0.22);
+  --color-border-strong: rgba(195, 204, 221, 0.42);
+  --color-hairline: rgba(251, 250, 246, 0.16);
+
+  --color-primary: var(--color-gold-500);
+  --color-primary-hover: var(--color-gold-400);
+  --color-primary-fg: var(--color-navy-800);
+
+  /* Sobre navy o ouro claro é o que atinge AA. */
+  --color-accent: var(--color-gold-400);
+  --color-accent-hover: var(--color-gold-300);
+  --color-accent-fg: var(--color-navy-800);
+  --color-accent-quiet: rgba(200, 162, 75, 0.22);
+
+  --color-focus: var(--color-gold-300);
+
+  /* Variantes claras das cores de contexto — mesmos nomes, valores para escuro. */
+  --color-arma-marinha: #63b8cd;
+  --color-arma-aero: #6cb0e0;
+  --color-arma-aero-light: #9ed3e6;
+  --color-arma-exercito: #9cbb90;
+  --color-arma-cadete: #e6949f;
+
+  /* Profundidade em navy: elevação tonal + sombra quase preta. */
+  --shadow-contact: 0 1px 2px rgba(3, 7, 18, 0.5);
+  --shadow-raise: 0 2px 4px rgba(3, 7, 18, 0.4), 0 10px 28px -14px rgba(3, 7, 18, 0.7);
+  --shadow-lift: 0 4px 8px rgba(3, 7, 18, 0.45), 0 24px 56px -22px rgba(3, 7, 18, 0.8);
+  --shadow-float:
+    0 2px 4px rgba(3, 7, 18, 0.45), 0 8px 18px -6px rgba(3, 7, 18, 0.5),
+    0 40px 72px -32px rgba(3, 7, 18, 0.85);
+  --shadow-press: 0 1px 0 rgba(3, 7, 18, 0.6);
+
+  color-scheme: dark;
+}
+
+/* --- INK: contraste máximo. Uso pontual (1-2 seções no site). ------------- */
+[data-surface="ink"] {
+  --rolagem-polegar: color-mix(in oklab, var(--color-bone-50) 22%, transparent);
+  --rolagem-trilho: color-mix(in oklab, #000000 30%, transparent);
+
+  --luz-superficie: linear-gradient(
+    to bottom,
+    color-mix(in oklab, white 4%, transparent),
+    transparent 40%
+  );
+
+  --costura-linha: color-mix(in oklab, #000000 50%, transparent);
+  --costura-sombra: color-mix(in oklab, #000000 66%, transparent);
+
+  --textura-superficie: url("/assets/textura/grao-escuro.png");
+
+  --color-canvas: var(--color-ink-600);
+  --color-canvas-alt: var(--color-ink-500);
+  --color-surface: var(--color-ink-500);
+  --color-surface-elevated: var(--color-navy-800);
+  --color-surface-sunken: var(--color-ink-700);
+
+  --color-fg: var(--color-bone-50);
+  --color-fg-muted: var(--color-steel-300);
+  --color-fg-subtle: #7787a6;
+  --color-fg-inverse: var(--color-ink-600);
+
+  --color-border: rgba(157, 171, 197, 0.2);
+  --color-border-strong: rgba(157, 171, 197, 0.4);
+  --color-hairline: rgba(251, 250, 246, 0.12);
+
+  --color-primary: var(--color-gold-500);
+  --color-primary-hover: var(--color-gold-400);
+  --color-primary-fg: var(--color-ink-700);
+
+  --color-accent: var(--color-gold-400);
+  --color-accent-hover: var(--color-gold-300);
+  --color-accent-fg: var(--color-ink-700);
+  --color-accent-quiet: rgba(200, 162, 75, 0.18);
+
+  --color-focus: var(--color-gold-300);
+
+  --color-arma-marinha: #63b8cd;
+  --color-arma-aero: #6cb0e0;
+  --color-arma-aero-light: #9ed3e6;
+  --color-arma-exercito: #9cbb90;
+  --color-arma-cadete: #e6949f;
+
+  --shadow-contact: 0 1px 2px rgba(0, 0, 0, 0.6);
+  --shadow-raise: 0 2px 4px rgba(0, 0, 0, 0.5), 0 10px 28px -14px rgba(0, 0, 0, 0.8);
+  --shadow-lift: 0 4px 8px rgba(0, 0, 0, 0.55), 0 24px 56px -22px rgba(0, 0, 0, 0.9);
+  --shadow-float:
+    0 2px 4px rgba(0, 0, 0, 0.55), 0 8px 18px -6px rgba(0, 0, 0, 0.6),
+    0 40px 72px -32px rgba(0, 0, 0, 0.9);
+  --shadow-press: 0 1px 0 rgba(0, 0, 0, 0.7);
+
+  color-scheme: dark;
+}

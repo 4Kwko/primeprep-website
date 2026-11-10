@@ -1,0 +1,567 @@
+/* =============================================================================
+   PRIME PREP — CAMADA BASE
+   Reset opinativo mínimo + defaults de acessibilidade.
+   Nada aqui deve conter decisão de layout de página.
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  /* BARRA DE ROLAGEM NA COR DA CASA.
+     Ela é uma superfície visível do site, e num site com rolagem suave a pessoa
+     olha para ela. Estava no cinza padrão do sistema, ao lado de uma paleta
+     inteira decidida.
+
+     `scrollbar-color` e não `::-webkit-scrollbar`: a propriedade padrão recolore
+     sem mexer na LARGURA nem no comportamento, então quem precisa de um alvo
+     grande continua tendo o alvo do sistema. Navegador que não a conhece fica com
+     a barra padrão, que é um resultado perfeitamente aceitável. */
+  html {
+    scrollbar-color: var(--rolagem-polegar) var(--rolagem-trilho);
+    -webkit-text-size-adjust: 100%;
+    /* Rolagem suave para âncora interna. É nativo: nada de biblioteca, nada de
+       interceptar clique no JS. O bloco de `prefers-reduced-motion` abaixo
+       devolve o salto instantâneo a quem pede menos movimento. */
+    scroll-behavior: smooth;
+    /* Compensa o header fixo ao navegar por âncora. 6rem = os 4rem do header
+       comprimido mais uma folga de leitura, para o alvo não encostar na barra. */
+    scroll-padding-top: 6rem;
+  }
+
+  /* `scroll-padding-top` cobre a navegação por link e por teclado; o
+     `scroll-margin-top` no alvo cobre `scrollIntoView` vindo de qualquer
+     origem. Em `:where()` para ficar com especificidade zero e nunca disputar
+     com um componente que precise de outro recuo. */
+  :where([id]) {
+    scroll-margin-top: 6rem;
+  }
+
+  /* --- Rolagem suave (Lenis) -------------------------------------------
+     A classe `lenis` é posta no <html> pelo próprio Lenis, e só existe enquanto
+     ele está instanciado, ou seja, nunca sob `prefers-reduced-motion`. As regras
+     estão escritas aqui, e não importadas do pacote, para ficarem visíveis na
+     revisão junto do resto do comportamento de rolagem.
+
+     `scroll-behavior: auto` porque o Lenis passa a ser o dono da suavidade. Ele
+     escreve a posição com `behavior: "instant"`, então não haveria trepidação de
+     escrita, mas uma navegação por âncora dispararia uma rolagem suave NATIVA
+     em cima da dele, e aí sim as duas disputariam. Com o Lenis desligado a
+     regra some e o `scroll-behavior: smooth` acima volta a valer sozinho. */
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  /* Bloco com rolagem própria (o painel do menu): a roda age nele, não na
+     página, e a rolagem não vaza para o documento ao chegar no fim. */
+  .lenis [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  /* `clip` e não `hidden`, pela mesma razão de `secao-composta`: trava a rolagem
+     sem transformar o elemento em container de rolagem. */
+  html.lenis.lenis-stopped {
+    overflow: clip;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Blocos de superfície herdam o fundo do seu escopo automaticamente */
+  /* Superfície: cor, texto e GRÃO DE PAPEL.
+     O north star do projeto é um diário de bordo, e até aqui as superfícies eram
+     cor chapada. O grão dá matéria a elas, na mesma família de textura das peças
+     de identidade do cliente.
+
+     Entra pelo mesmo mecanismo de escopo que todo o resto, então cada superfície
+     escolhe o próprio grão e nenhum componente precisa saber que ele existe.
+
+     `background-blend-mode: overlay` É O QUE TORNA ISTO SEGURO. O ruído tem média
+     exatamente 128, e em `overlay` cinza médio é a identidade: o grão adiciona
+     variação sem deslocar a cor da superfície. Sem a mescla, compor o ruído por
+     cima empurraria toda superfície para o cinza. Foi medido: o pergaminho perdia
+     16 níveis de luminância e o navy ganhava 19. Com a mescla, o deslocamento é
+     de 0,25 nível e o desvio fica em 2, que é o grão. */
+  [data-surface] {
+    background-color: var(--color-canvas);
+
+    /* DUAS CAMADAS: a luz por cima, o grão por baixo, a cor no fundo.
+       A luz é um decaimento vertical curtíssimo, e existe para o site inteiro
+       concordar com uma coisa só: a iluminação vem de cima. É o mesmo modelo do
+       relevo do botão primário, do filete claro no topo do header e da sombra
+       de costura entre superfícies. Sem ele, cada um desses elementos estava
+       dizendo "luz de cima" sozinho, contra um fundo que não dizia nada.
+
+       Não é "fundo em gradiente" no sentido que a regra 8 veta: o decaimento
+       termina no primeiro terço e a variação é de poucos por cento. É
+       iluminação, não tratamento cromático.
+
+       `normal, overlay`: a luz compõe direto, o grão precisa de `overlay` para
+       não deslocar a cor (ver abaixo). */
+    background-image: var(--luz-superficie, none), var(--textura-superficie, none);
+    background-blend-mode: normal, overlay;
+    background-repeat: no-repeat, repeat;
+
+    /* A ALTURA DA LUZ É FIXA, e isso é o que a mantém sendo luz.
+       Com `background-size: auto`, o decaimento se estica na altura do elemento:
+       numa seção de 2000px a transição levaria 900px e o resultado seria uma
+       lavagem cromática, exatamente o "fundo em gradiente" que a regra 8 veta.
+       Travada em 240px, ela é sempre a mesma faixa de luz na borda de cima,
+       independente do tamanho da seção. O grão, esse sim, ladrilha. */
+    background-size:
+      100% 240px,
+      auto;
+    color: var(--color-fg);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  /* --- Foco: um único anel, visível em qualquer superfície --------------- */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* --- Alvos de toque: mínimo 44px em ponteiro grosso -------------------- */
+  @media (pointer: coarse) {
+    a[data-touch-target],
+    button,
+    [role="button"],
+    input[type="submit"] {
+      min-height: 44px;
+    }
+  }
+
+  /* Blocos com rolagem própria (painel do menu, tabela larga) usam a cor da
+     superfície em que estão, não a da página. */
+  [data-surface] :where([data-lenis-prevent], .overflow-x-auto, .overflow-y-auto) {
+    scrollbar-color: var(--rolagem-polegar) var(--rolagem-trilho);
+  }
+
+  /* --- Mídia ------------------------------------------------------------- */
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* --- Seleção ------------------------------------------------------------
+     O site não é selecionável. É decisão de produto: a intenção é que ele leia
+     como interface, não como documento, e arrastar o cursor sobre um título não
+     produz mais um rastro azul no meio da composição.
+
+     COM DUAS EXCEÇÕES, E ELAS NÃO SÃO NEGOCIÁVEIS. O número do WhatsApp e o @
+     do Instagram continuam selecionáveis, porque copiar o contato é literalmente
+     a ação que o site inteiro existe para provocar. Travar ali seria trocar
+     estética por conversão. Campos de formulário entram na mesma isenção por
+     precaução: hoje não existem, e se um dia existirem já nascem funcionando.
+
+     `-webkit-` explícito porque o Safari ainda pede o prefixo. */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  [data-selecionavel],
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-quiet);
+    color: var(--color-fg);
+  }
+
+  /* --- Movimento reduzido: desliga tudo que não seja opacidade ----------- */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =============================================================================
+   REVEAL POR SCROLL — seguro por construção
+   O estado padrão do HTML é VISÍVEL. O estado inicial escondido só existe onde
+   `@media (scripting: enabled)` casa — ou seja, onde há JavaScript para revelar.
+   Sem JS (ou em navegador sem suporte à media query) nada é escondido e o
+   conteúdo é lido normalmente. Nenhum script inline, nenhum mismatch de
+   hidratação. Ver src/components/motion/Reveal.tsx e a decisão D-21.
+   ========================================================================== */
+
+@layer base {
+  @media (scripting: enabled) {
+    [data-reveal],
+    [data-reveal-group] > [data-reveal-item] {
+      opacity: 0;
+      transform: translateY(var(--motion-rise));
+      transition:
+        opacity var(--duration-reveal) var(--ease-out-quart),
+        transform var(--duration-reveal) var(--ease-out-quart);
+    }
+
+    [data-reveal][data-revealed],
+    [data-reveal-group][data-revealed] > [data-reveal-item] {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* A RÉGUA SE DESENHA. O divisor ornamental é um losango com dois filetes
+       saindo dele; quando o bloco entra, os filetes crescem a partir do losango
+       para fora, como um traço feito com régua. É o gesto da marca virando
+       movimento, e não mais uma coisa que aparece com fade junto de tudo.
+       Vive aqui dentro, sob `scripting: enabled`, pela mesma razão do reveal:
+       sem JavaScript `data-revealed` nunca chega, e o ornamento ficaria em
+       `scaleX(0)`, ou seja, invisível. */
+    [data-reveal] .rule-ornament::before,
+    [data-reveal] .rule-ornament::after {
+      transform: scaleX(0);
+      transition: transform var(--duration-reveal) var(--ease-out-quart) 120ms;
+    }
+    [data-reveal] .rule-ornament::before {
+      transform-origin: right;
+    }
+    [data-reveal] .rule-ornament::after {
+      transform-origin: left;
+    }
+    [data-reveal][data-revealed] .rule-ornament::before,
+    [data-reveal][data-revealed] .rule-ornament::after {
+      transform: scaleX(1);
+    }
+
+    /* Escalonamento: para de crescer no 5º filho para não atrasar a leitura. */
+    [data-reveal-group][data-revealed] > [data-reveal-item] {
+      transition-delay: calc(var(--motion-stagger) * var(--pp-i, 0));
+    }
+    [data-reveal-group] > [data-reveal-item]:nth-child(1) {
+      --pp-i: 0;
+    }
+    [data-reveal-group] > [data-reveal-item]:nth-child(2) {
+      --pp-i: 1;
+    }
+    [data-reveal-group] > [data-reveal-item]:nth-child(3) {
+      --pp-i: 2;
+    }
+    [data-reveal-group] > [data-reveal-item]:nth-child(4) {
+      --pp-i: 3;
+    }
+    [data-reveal-group] > [data-reveal-item]:nth-child(n + 5) {
+      --pp-i: 4;
+    }
+  }
+
+  /* Movimento reduzido: nada some, nada espera. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal],
+    [data-reveal-group] > [data-reveal-item] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition-delay: 0ms !important;
+    }
+
+    /* Só o transform: a opacidade destes é o desenho do ornamento (0.5), não
+       um estado de entrada. Zerá-la aqui acenderia a régua em ouro cheio. */
+    [data-reveal] .rule-ornament::before,
+    [data-reveal] .rule-ornament::after {
+      transform: none !important;
+    }
+  }
+}
+
+/* =============================================================================
+   IMPRESSÃO
+
+   ISTO COMEÇOU COMO CORREÇÃO DE DEFEITO, não como acabamento. O reveal por
+   scroll esconde por opacidade sob `scripting: enabled`, e nada revela o que
+   nunca entrou na janela. Medido em `/metodologia`: recém-carregada, as SETE
+   entradas de reveal estavam com `opacity: 0`. Imprimir a página nesse estado
+   produzia um documento com quase todo o conteúdo em branco.
+
+   O resto da folha segue do mesmo princípio do site: é um diário de bordo, e
+   um diário imprime como documento. Papel é a superfície; tinta é o texto.
+   ========================================================================== */
+
+@media print {
+  /* 1. NADA ESCONDIDO. Primeiro e mais importante. */
+  [data-reveal],
+  [data-reveal-group] > [data-reveal-item] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  [data-reveal] .rule-ornament::before,
+  [data-reveal] .rule-ornament::after {
+    transform: none !important;
+  }
+
+  /* 2. A SUPERFÍCIE É O PAPEL.
+     Nenhuma superfície pinta fundo: o branco da folha é o `canvas`, e o
+     navegador não gasta tinta com bloco chapado (a maioria nem imprimiria).
+     Sem grão, sem luz de cima, sem costura: todos são `background-image`. */
+  [data-surface] {
+    --color-canvas: transparent;
+    --color-canvas-alt: transparent;
+    --color-surface: transparent;
+    --color-surface-elevated: transparent;
+    --color-surface-sunken: transparent;
+    background-image: none;
+    box-shadow: none;
+  }
+
+  /* 3. A TINTA VOLTA A SER ESCURA NAS SUPERFÍCIES ESCURAS.
+     Em navy e ink o texto é osso, que sobre papel branco é invisível. Estes são
+     os mesmos valores que o pergaminho já usa, e a razão de existirem: sobre
+     claro, o ouro precisa do tom escuro para atingir AA.
+
+     `--color-arma-*` fica como está, de propósito. O losango tem 7px e a cor
+     dele nunca informa sozinha: a sigla ao lado carrega o significado em texto
+     (ver `Concursos.tsx`). Restaurar cinco tokens para um ponto de 7px que a
+     impressora provavelmente nem pinta seria trabalho sem resultado. */
+  [data-surface="navy"],
+  [data-surface="ink"] {
+    --color-fg: var(--color-navy-700);
+    --color-fg-muted: var(--color-navy-600);
+    --color-fg-subtle: var(--color-navy-500);
+    --color-accent: var(--color-gold-700);
+    --color-border: var(--color-bone-300);
+    --color-border-strong: var(--color-navy-200);
+    --color-hairline: color-mix(in oklab, var(--color-navy-600) 20%, transparent);
+  }
+
+  /* 4. O QUE NÃO EXISTE NO PAPEL.
+     Navegação, controles e cenário. O cabeçalho é a camada de interface do
+     site, e interface impressa é ruído. Os planos de fundo e intermediário são
+     cenário: campo gráfico, marca d'água e numeral de registro existem para dar
+     profundidade a uma tela que rola, e nenhum deles é conteúdo.
+
+     Os CTAs saem porque um botão no papel é um controle morto, e o rótulo deles
+     é a MENSAGEM que seria enviada ("Quero me preparar para a EFOMM"), não uma
+     informação. O contato continua impresso: o número e o @ estão em texto no
+     rodapé, que é por onde a conversa começa de todo jeito. */
+  header,
+  .plano-fundo,
+  .plano-meio,
+  .numeral-registro,
+  .linha-leitura,
+  .btn-base {
+    display: none !important;
+  }
+
+  /* 5. QUEBRA DE PÁGINA.
+     Título não fica sozinho no pé da folha, e bloco fechado não parte no meio.
+     `.log-entry` fica de fora: as entradas chegam a 1920px, mais alto que
+     qualquer folha, e `break-inside: avoid` em bloco maior que a página é
+     ignorado de qualquer forma. */
+  h1,
+  h2,
+  h3,
+  .text-label-caps {
+    break-after: avoid;
+  }
+
+  .card-surface,
+  .painel-suspenso,
+  .log-rail,
+  li,
+  dl {
+    break-inside: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* 6. O RESPIRO DA TELA NÃO É O RESPIRO DA FOLHA.
+     As seções são generosas porque a tela rola de graça; no papel, cada
+     centímetro é uma folha a mais. */
+  :root {
+    --space-section: 2.5rem;
+    --space-section-sm: 2rem;
+    --space-section-lg: 3rem;
+  }
+
+  @page {
+    margin: 18mm 16mm;
+  }
+}
+
+/* =============================================================================
+   ALTO CONTRASTE FORÇADO (Windows High Contrast e equivalentes)
+
+   O modo força `background-color` e `color` para as cores do sistema, e ignora
+   o valor do autor **exceto quando ele mesmo é uma cor de sistema**. Quatro
+   marcas deste site são desenhadas com `background-color`, então todas as
+   quatro desapareciam: elas eram pintadas com a cor do TEXTO e passavam a ser
+   pintadas com a cor do FUNDO.
+
+   A pior delas é o losango. Ele não é enfeite no diagnóstico: o rádio é
+   `sr-only` e o losango é o ÚNICO sinal visual de qual opção está marcada.
+   Somado a isso, a borda de todos os cartões é forçada para a mesma cor, então
+   "borda dourada na marcada" também deixa de distinguir. Sem esta regra, quem
+   usa alto contraste respondia o diagnóstico sem ver o que tinha escolhido.
+
+   `opacity` NÃO é forçada, e é ela que continua separando marcado (1) de não
+   marcado (0,3) depois que a cor volta.
+
+   NÃO OBSERVADO NO MODO. Não houve como emular alto contraste no navegador
+   desta sessão; o que está aqui segue o comportamento especificado e a forma
+   documentada de lidar com ele. O risco é limitado por construção: fora do
+   modo, nada disto existe.
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  /* As marcas voltam a ser pintadas com a cor do texto. */
+  .mark-lozenge,
+  .marcador-nav,
+  .link-filete::after {
+    background-color: CanvasText;
+  }
+
+  /* Matéria é decoração, e no alto contraste ela só suja o fundo do sistema:
+     o grão vem com `background-blend-mode: overlay`, que sobre uma cor forçada
+     vira textura sem propósito. O relevo do botão pela mesma razão: ali quem
+     manda são `ButtonFace` e `ButtonText`, não o ouro da marca. */
+  [data-surface],
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    background-image: none;
+  }
+}
+
+/* =============================================================================
+   MAIS CONTRASTE, A PEDIDO
+
+   `prefers-contrast: more` é uma pessoa dizendo que a leitura está difícil. O
+   site já passa em AA em toda parte (medido: nove rotas, 1280 e 390, zero
+   falhas), então o que este bloco faz é subir a régua para AAA e tirar de trás
+   do texto tudo que existe para dar profundidade.
+
+   Medido antes, por superfície (bone / navy / ink):
+     fg          15,09  14,61  18,31
+     fg-muted     7,58   9,45   8,26
+     fg-subtle    5,06   6,50   5,28   <- abaixo de 7
+     accent       4,88   7,50   9,40   <- abaixo de 7 em bone
+   ========================================================================== */
+
+@media (prefers-contrast: more) {
+  /* 1. O tom mais fraco de texto sobe um degrau. `fg-subtle` vira `fg-muted`,
+        e com isso o pior par passa de 5,06 para 7,58: AAA nas três.
+     2. Matéria sai. Grão e luz de cima são `background-image`, e ruído sobre
+        texto é exatamente o que este modo pede para tirar. A costura fica: ela
+        é `box-shadow`, e separa folhas em vez de sujar o papel. */
+  [data-surface] {
+    --color-fg-subtle: var(--color-fg-muted);
+    background-image: none;
+  }
+
+  /* Sobre pergaminho o ouro era o único par que sobrava abaixo de 7:1. O tom
+     escuro da rampa dá 7,16. Em navy e ink o ouro claro já dá 7,5 e 9,4, então
+     lá nada muda. */
+  [data-surface="bone"] {
+    --color-accent: var(--color-gold-800);
+
+    /* Ver a regra do degrau tonal, logo abaixo. Em pergaminho o texto é escuro,
+       então quem custa contraste é o degrau para BAIXO, e ele passa a apontar
+       para cima: o afundado vira o mesmo branco do cartão. */
+    --color-surface-sunken: var(--color-surface);
+  }
+
+  /* A REGRA DO DEGRAU TONAL. Ela é simétrica, e o verbo é INVERTER, não apagar.
+
+     Um degrau que anda NA DIREÇÃO DA COR DO TEXTO fecha a distância entre os
+     dois e custa contraste. Medido, e nas duas direções: na Home o `fg-muted`
+     num painel afundado dá 6,81 em vez de 7,58, e em `/concursos` o `fg` num
+     cartão elevado dá 6,85 em vez de 14,61.
+
+     A primeira versão colapsava esses degraus na superfície. Funcionava para o
+     contraste e cobrava caro: some o zebrado da tabela comparativa, que é apoio
+     de LEITURA de linha, exatamente o que alguém pedindo mais contraste também
+     precisa. Inverter resolve os dois: o degrau continua existindo, do mesmo
+     tamanho, e passa a AFASTAR o fundo da cor do texto em vez de aproximá-lo.
+     O zebrado fica, a profundidade fica, e o contraste sobe.
+
+     Os degraus que já apontavam para longe do texto não são tocados: em
+     pergaminho o cartão branco e em navy o afundado escuro. */
+  [data-surface="navy"],
+  [data-surface="ink"] {
+    --color-surface: var(--color-surface-sunken);
+    --color-surface-elevated: var(--color-surface-sunken);
+  }
+
+  /* Tudo que fica ATRÁS do texto sai, e é o custo declarado da profundidade: o
+     numeral escurece o fundo efetivo em 4,5%, a marca d'água em 5,5%, e o campo
+     gráfico é uma grade sob a abertura. Nenhum dos três é conteúdo.
+     A mesma regra vale para `prefers-reduced-transparency`, logo abaixo. */
+  .numeral-registro,
+  .marca-dagua,
+  .plano-fundo {
+    display: none !important;
+  }
+}
+
+/* =============================================================================
+   MENOS TRANSPARÊNCIA, A PEDIDO
+
+   O site não tem vidro nem desfoque: glassmorphism está vetado na direção, e é
+   por isso que este bloco é curto. O que ele tem são três coisas que existem
+   POR BAIXO do texto e só funcionam por serem translúcidas: o numeral de
+   registro (4,5%), a marca d'água (5,5%) e o campo gráfico da abertura.
+
+   São exatamente as mesmas três de `prefers-contrast: more`, e por um motivo
+   diferente: lá elas saem por custarem contraste, aqui por serem o único lugar
+   do site onde conteúdo aparece através de outra coisa. O pedido é o mesmo, e
+   a resposta também.
+   ========================================================================== */
+
+@media (prefers-reduced-transparency: reduce) {
+  .numeral-registro,
+  .marca-dagua,
+  .plano-fundo {
+    display: none !important;
+  }
+}

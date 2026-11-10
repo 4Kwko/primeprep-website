@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-07T00:00:00.000Z",
+  "title": "Design System: Prime Prep",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "primary",
+        "displayName": "Navy Prime",
+        "canonical": "#0f2350",
+        "tonalRamp": [
+          "#eef2fa",
+          "#d6dff1",
+          "#adbde2",
+          "#7b91c7",
+          "#4d64a1",
+          "#1c3572",
+          "#0f2350",
+          "#0c1c40",
+          "#091531",
+          "#060e21"
+        ]
+      },
+      "gold": {
+        "role": "secondary",
+        "displayName": "Gold Prime",
+        "canonical": "#c8a24b",
+        "tonalRamp": ["#efe0b8", "#e0c98a", "#d3b263", "#c8a24b", "#a9852f", "#83661f"]
+      },
+      "crimson": {
+        "role": "tertiary",
+        "displayName": "Crimson Heráldico",
+        "canonical": "#8e2f3c",
+        "tonalRamp": ["#f0cdd2", "#b8515f", "#8e2f3c", "#72212c"]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Pergaminho",
+        "canonical": "#f6f3ec",
+        "tonalRamp": ["#fbfaf6", "#f6f3ec", "#ece7db", "#ddd5c3", "#c4b9a1"]
+      },
+      "steel": {
+        "role": "neutral",
+        "displayName": "Aço Frio",
+        "canonical": "#5b6b8c",
+        "tonalRamp": ["#c3ccdd", "#9dabc5", "#7787a6", "#5b6b8c", "#44526e"]
+      },
+      "arma-marinha": {
+        "role": "tertiary",
+        "displayName": "Marinha (EFOMM)",
+        "canonical": "#1b5e72",
+        "tonalRamp": ["#63b8cd", "#1b5e72"]
+      },
+      "arma-aero": {
+        "role": "tertiary",
+        "displayName": "Aeronáutica (AFA)",
+        "canonical": "#1f6fa8",
+        "tonalRamp": ["#6cb0e0", "#1f6fa8"]
+      },
+      "arma-aero-light": {
+        "role": "tertiary",
+        "displayName": "Aeronáutica Clara (EEAR)",
+        "canonical": "#26708f",
+        "tonalRamp": ["#9ed3e6", "#26708f"]
+      },
+      "arma-cadete": {
+        "role": "tertiary",
+        "displayName": "Cadete (EsPCEx)",
+        "canonical": "#8e2f3c",
+        "tonalRamp": ["#e6949f", "#8e2f3c"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Abertura de hero. Uma vez por página." },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título de seção dentro de uma entrada de diário."
+      },
+      "title": { "displayName": "Title", "purpose": "Título de cartão e de subseção." },
+      "editorial": {
+        "displayName": "Editorial Itálico",
+        "purpose": "Nome por extenso de concursos e citações. Herança das peças da marca."
+      },
+      "body": { "displayName": "Body", "purpose": "Corpo de texto, medida 62-72ch." },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulo de interface, botão, cabeçalho de tabela."
+      },
+      "inscription": {
+        "displayName": "Inscription",
+        "purpose": "Cinzel capitular. Eyebrow, marca, número de entrada. Máximo 4 palavras — nunca frase."
+      }
+    },
+    "shadows": [
+      {
+        "name": "hairline",
+        "value": "0 0 0 1px color-mix(in oklab, #0f2350 12%, transparent)",
+        "purpose": "Anel de contorno sem geometria própria."
+      },
+      {
+        "name": "raise",
+        "value": "0 1px 2px rgba(9,21,49,0.06), 0 8px 24px -12px rgba(9,21,49,0.18)",
+        "purpose": "Repouso de cartão elevado e de botão primário."
+      },
+      {
+        "name": "lift",
+        "value": "0 2px 4px rgba(9,21,49,0.08), 0 20px 48px -20px rgba(9,21,49,0.28)",
+        "purpose": "Hover de cartão interativo e de CTA."
+      },
+      {
+        "name": "press",
+        "value": "0 1px 0 rgba(9,21,49,0.20)",
+        "purpose": "Estado :active, com translateY(1px). A resposta tátil do sistema."
+      },
+      {
+        "name": "inset-top",
+        "value": "inset 0 1px 0 rgba(255,255,255,0.06)",
+        "purpose": "Luz superior em superfícies navy — sugere material."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Entradas e reveals."
+      },
+      {
+        "name": "ease-in-out-quint",
+        "value": "cubic-bezier(0.83, 0, 0.17, 1)",
+        "purpose": "Transições de página e de painel."
+      },
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Micro-interações: hover, cor, borda."
+      },
+      { "name": "duration-fast", "value": "160ms", "purpose": "Hover e mudança de cor." },
+      { "name": "duration-base", "value": "260ms", "purpose": "Transição padrão de componente." },
+      {
+        "name": "duration-reveal",
+        "value": "640ms",
+        "purpose": "Reveal de bloco ao entrar na viewport. Dispara uma vez."
+      },
+      {
+        "name": "motion-rise",
+        "value": "14px",
+        "purpose": "Deslocamento de entrada. Curto e decidido, sem bounce."
+      },
+      {
+        "name": "motion-stagger",
+        "value": "60ms",
+        "purpose": "Escalonamento entre filhos. Máximo 4-6 filhos."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão Primário",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA de alta intenção (matrícula). Sólido, com peso e resposta física ao toque.",
+      "html": "<button class=\"ds-btn-primary\">Iniciar matrícula</button>",
+      "css": ".ds-btn-primary { background:#c8a24b; color:#091531; padding:16px 32px; border:0; border-radius:4px; font-family:Inter,system-ui,sans-serif; font-size:.875rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; box-shadow:0 1px 2px rgba(9,21,49,.06),0 8px 24px -12px rgba(9,21,49,.18); transition:background 160ms cubic-bezier(.4,0,.2,1), box-shadow 260ms cubic-bezier(.22,1,.36,1), transform 160ms cubic-bezier(.4,0,.2,1); } .ds-btn-primary:hover { background:#d3b263; box-shadow:0 2px 4px rgba(9,21,49,.08),0 20px 48px -20px rgba(9,21,49,.28); transform:translateY(-1px); } .ds-btn-primary:active { box-shadow:0 1px 0 rgba(9,21,49,.2); transform:translateY(1px); }"
+    },
+    {
+      "name": "Botão Secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação secundária (WhatsApp). Contorno, preenche no hover.",
+      "html": "<button class=\"ds-btn-secondary\">Falar no WhatsApp</button>",
+      "css": ".ds-btn-secondary { background:transparent; color:#fbfaf6; padding:16px 32px; border:1px solid rgba(195,204,221,.42); border-radius:4px; font-family:Inter,system-ui,sans-serif; font-size:.875rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; transition:background 160ms, border-color 160ms; } .ds-btn-secondary:hover { background:#1c3572; border-color:#c3ccdd; }"
+    },
+    {
+      "name": "Entrada de Diário",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Assinatura estrutural do site. Trilho de margem à esquerda com número e rótulo; conteúdo à direita. Colapsa em linha horizontal abaixo de lg. Substitui o empilhamento de seções centralizadas.",
+      "html": "<section class=\"ds-log\"><div class=\"ds-log-rail\"><span class=\"ds-log-num\">01</span><span class=\"ds-log-label\">Quem somos</span></div><div class=\"ds-log-body\"><h2>Preparação medida, aluno por aluno</h2></div></section>",
+      "css": ".ds-log { display:grid; grid-template-columns:14rem 1fr; gap:2rem; } .ds-log-rail { border-left:1px solid rgba(15,35,80,.14); padding-left:1rem; display:flex; flex-direction:column; gap:.5rem; } .ds-log-num { font-family:Cinzel,serif; font-size:.875rem; letter-spacing:.18em; color:#83661f; } .ds-log-label { font-family:Inter,sans-serif; font-size:.8125rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#6a7691; } @media (max-width:1023px){ .ds-log{ grid-template-columns:1fr; gap:1rem; } .ds-log-rail{ border-left:0; border-top:1px solid rgba(15,35,80,.14); padding-left:0; padding-top:.75rem; flex-direction:row; align-items:center; gap:.75rem; } }"
+    },
+    {
+      "name": "Losango",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Geometria de assinatura extraída do ornamento da marca. Marcação de rota do diário de bordo. clip-path puro, sem imagem, dimensionável por font-size.",
+      "html": "<span class=\"ds-lozenge\"></span>",
+      "css": ".ds-lozenge { display:inline-block; width:.5em; height:.5em; background:currentColor; clip-path:polygon(50% 0%,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0% 50%,38% 38%); }"
+    },
+    {
+      "name": "Cartão",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Superfície de conteúdo. Plana em repouso; elevação real e borda dourada no hover.",
+      "html": "<article class=\"ds-card\"><h3>EFOMM</h3><p>Escola de Formação de Oficiais da Marinha Mercante</p></article>",
+      "css": ".ds-card { background:#fff; border:1px solid #ddd5c3; border-radius:12px; padding:24px; transition:border-color 260ms cubic-bezier(.22,1,.36,1), transform 260ms cubic-bezier(.22,1,.36,1), box-shadow 260ms cubic-bezier(.22,1,.36,1); } .ds-card:hover { border-color:#83661f; transform:translateY(-2px); box-shadow:0 2px 4px rgba(9,21,49,.08),0 20px 48px -20px rgba(9,21,49,.28); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Diário de Bordo",
+    "overview": "Um diário de bordo é o registro disciplinado de uma travessia: cada entrada datada, numerada e medida. É um objeto de papel — quente, manuseado — carregando informação rigorosamente técnica. Essa tensão entre matéria humana e precisão institucional é a Prime Prep: um curso que promete acompanhamento individual e o prova com uma planilha de desempenho por aluno. O sistema é editorial antes de institucional, e institucional antes de decorativo. O fundo dominante é pergaminho quente, não branco clínico nem navy sólido. O navy aparece onde a instituição fala em primeira pessoa. O ouro é marcação de mérito, escasso por doutrina.",
+    "keyCharacteristics": [
+      "Pergaminho quente como superfície de leitura; navy como voz institucional",
+      "Seções numeradas com trilho de margem — composição assimétrica por construção",
+      "Ouro ≤5% da área de qualquer tela",
+      "Serifada display + sans de interface + capitular inscricional como carimbo",
+      "Losango de quatro pontas como marcação de rota",
+      "Cor de contexto por concurso derivada da força militar real",
+      "Componentes firmes e táteis: botão sólido com peso, cartão com elevação real"
+    ],
+    "rules": [
+      {
+        "name": "A Regra dos 5%",
+        "body": "O ouro ocupa no máximo 5% da área de qualquer tela. Sua raridade é o argumento. Proibido em parágrafo, em texto abaixo de 18px sobre navy, como fundo de bloco grande e em qualquer gradiente.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Superfície",
+        "body": "Nenhum componente escolhe sua própria cor. O bloco declara data-surface e todos os tokens semânticos abaixo dele mudam.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Duplo Portador",
+        "body": "Cor de contexto nunca é o único portador de significado. Toda cor de concurso vem acompanhada da sigla em texto.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Verde",
+        "body": "O verde só existe como código de concurso do Exército. Nunca como cor de tema — é a fronteira entre autoridade militar e caricatura.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra das Quatro Palavras",
+        "body": "Tracking largo em caixa alta só existe em rótulos de até quatro palavras.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Carimbo",
+        "body": "Cinzel nunca forma frase. É marca, rótulo ou número.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Resposta Física",
+        "body": "Sombra comunica estado, não hierarquia. Hierarquia é borda, valor e espaço.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do declarar a superfície no bloco (data-surface) e deixar os tokens semânticos fazerem o resto.",
+      "Do usar LogEntry para toda seção de conteúdo — numeração e trilho de margem são a assinatura estrutural.",
+      "Do manter o ouro abaixo de 5% da área e trocá-lo por gold-deep sobre pergaminho.",
+      "Do alternar superfícies para criar ritmo: navy → bone → bone → navy.",
+      "Do acompanhar toda cor de concurso da sigla em texto.",
+      "Do animar apenas transform e opacity, com reveal de bloco disparando uma única vez.",
+      "Do tratar ausência de dado como ausência — campo vazio custa menos que dado falso.",
+      "Do validar em 375px antes de qualquer outra largura."
+    ],
+    "donts": [
+      "Don't empilhar seções de título centralizado.",
+      "Don't usar badge + H1 central + dois botões lado a lado + mockup.",
+      "Don't usar gradient text, glow, glassmorphism, bento grid, blob ou rounded-3xl.",
+      "Don't repetir grades de três ou seis cartões idênticos com um ícone cada.",
+      "Don't inventar métrica, aprovação, depoimento, logo de parceiro ou dado de edital como definitivo.",
+      "Don't usar camuflagem, estêncil, arma, HUD tático ou verde militar como tema.",
+      "Don't criar urgência artificial.",
+      "Don't montar URL de WhatsApp dentro de componente — usar resolveIntent().",
+      "Don't usar sombra para hierarquia; sombra é resposta a estado."
+    ]
+  }
+}

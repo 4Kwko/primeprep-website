@@ -1,0 +1,1159 @@
+/* =============================================================================
+   PRIME PREP — UTILITÁRIOS DE ASSINATURA
+   Poucos utilitários, cada um carregando um traço concreto da identidade.
+   Se um efeito não for reutilizado em pelo menos duas seções, ele NÃO entra aqui.
+   ========================================================================== */
+
+/* --- Containers ----------------------------------------------------------- */
+@utility container-content {
+  width: 100%;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility container-wide {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* --- Ritmo vertical de seção ---------------------------------------------- */
+@utility section-sm {
+  padding-block: var(--space-section-sm);
+}
+@utility section {
+  padding-block: var(--space-section);
+}
+@utility section-lg {
+  padding-block: var(--space-section-lg);
+}
+
+/* --- Tipografia de assinatura --------------------------------------------- */
+
+/* Rótulo inscricional (Cinzel). Só para 1-4 palavras em caixa alta. */
+@utility text-inscription {
+  font-family: var(--font-inscription);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-inscription);
+  font-size: var(--text-label);
+  line-height: 1.2;
+}
+
+/* Rótulo de interface (sans caixa alta). Eyebrows, chips, cabeçalho de tabela. */
+@utility text-label-caps {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Subtítulo editorial (Fraunces itálico) — nome por extenso de concursos. */
+@utility text-editorial-italic {
+  font-family: var(--font-display-italico);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* --- Assinatura gráfica: o losango de 4 pontas ----------------------------- */
+
+/* Losango isolado, dimensionável por font-size/width. */
+@utility mark-lozenge {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  /* SEM GRADIENTE, e isso foi testado. Chegou a existir aqui uma luz vertical
+     para o losango ler como marcador estampado. Renderizado no tamanho REAL em
+     que ele aparece (0.5em, ou seja, 7 a 8px), a versão com gradiente e a
+     chapada são indistinguíveis: não há altura para uma transição acontecer.
+     Era custo sem efeito, e saiu. Relevo só onde há área para ele, como no
+     botão primário, que tem 52px. */
+  background-color: currentColor;
+  clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+}
+
+/* Divisor ornamental: filete fino interrompido por losango central.
+   Uso máximo recomendado: 1 por dobra. */
+@utility rule-ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-accent);
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to var(--rule-dir, right),
+      transparent,
+      currentColor 60%,
+      currentColor
+    );
+    opacity: 0.5;
+  }
+  &::before {
+    --rule-dir: right;
+  }
+  &::after {
+    --rule-dir: left;
+    background: linear-gradient(to left, transparent, currentColor 60%, currentColor);
+  }
+}
+
+/* --- Superfícies ----------------------------------------------------------- */
+
+/* Cartão institucional: borda hairline + fundo de superfície. Sem sombra pesada. */
+@utility card-surface {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--duration-base) var(--ease-out-quart),
+    transform var(--duration-base) var(--ease-out-quart),
+    box-shadow var(--duration-base) var(--ease-out-quart);
+}
+
+/* Cartão que é objeto clicável. "Firme e tátil": ele assenta na superfície em
+   repouso com sombra de CONTATO (não flutua, encosta) e sobe de verdade no
+   hover. Antes era plano até o ponteiro chegar, o que fazia um alvo de navegação
+   parecer texto. A sombra aqui responde a estado, não decora. */
+@utility card-interactive {
+  box-shadow: var(--shadow-contact);
+
+  /* A BORDA DO HOVER É A COR DO PRÓPRIO CONCURSO, quando existe uma.
+     Os cartões de concurso já declaram `--concurso` com a cor da força, e ela
+     estava sendo usada só no losango. Trazê-la para a borda no hover transforma
+     o realce em informação: antes de clicar, a pessoa já vê de qual escola é o
+     cartão que ela está prestes a abrir. Cartão sem cor de contexto continua
+     usando o acento, que é o comportamento antigo. */
+  &:hover {
+    border-color: var(--concurso, var(--color-accent));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-contact);
+  }
+}
+
+/* --- Textura de linho (herança da peça do chatbot) -------------------------
+   Ruído procedural em SVG inline. Sutilíssimo, no máximo 2 superfícies no site.
+   Sem requisição de rede e sem imagem raster. */
+@utility texture-linen {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* --- Acessibilidade -------------------------------------------------------- */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+
+  &:focus-visible {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* =============================================================================
+   ASSINATURA ESTRUTURAL — "O DIÁRIO DE BORDO"
+   Ver DESIGN.md § Layout. Estes utilitários existem para tornar impossível o
+   empilhamento de seções centralizadas que caracteriza landing pages geradas.
+   ========================================================================== */
+
+/* Grade da entrada de diário: trilho de margem + corpo.
+   Desktop: duas colunas com filete vertical.
+   Abaixo de lg: colapsa em uma coluna com filete horizontal acima. */
+@utility log-entry {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+
+  @media (width >= 64rem) {
+    position: relative;
+    grid-template-columns: 13rem 1fr;
+    gap: 3rem;
+
+    /* A RÉGUA DE MARGEM.
+       O trilho já tinha um filete à esquerda, mas ele ficou com 44px depois que
+       `align-self: start` entrou para consertar o `sticky` (D-40): numa entrada
+       de 1920px, medida, a régua do razão era um traço de 2% da altura. A
+       coluna de margem existia na grade e não existia na página.
+
+       Agora são duas coisas, e a divisão é o que a torna informação em vez de
+       enfeite: esta régua é CONTÍNUA e marca a coluna; o filete do trilho é
+       CURTO, dourado e gruda no topo enquanto se lê, então ele responde "onde
+       eu estou dentro desta entrada". Mesmo vocabulário do marcador de item
+       ativo do menu e da linha de leitura do header.
+
+       1px nos dois, e é por isso que alinham na mesma coluna de pixel. Em 2px o
+       filete dourado passa a ler como a barra colorida de cartão que a direção
+       veta; renderizado no tamanho real, a diferença é clara.
+
+       Abaixo de lg não existe: ali o trilho é horizontal e a coluna de margem
+       não é a composição. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      left: 0;
+      width: 1px;
+      /* `opacity` e não `color-mix`: o CSS compilado mostrou que o Lightning
+         precisa emitir um fallback para `color-mix`, e para isso resolve
+         `var(--color-hairline)` no `:root`, congelando NAVY. A régua vive nas
+         três superfícies, e em navy o fallback seria navy sobre navy. Com
+         `opacity` a cor continua resolvendo no elemento e não há fallback. */
+      background-color: var(--color-hairline);
+      opacity: 0.65;
+    }
+  }
+}
+
+@utility log-rail {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.875rem;
+  border-top: 1px solid var(--color-hairline);
+  padding-top: 0.875rem;
+
+  @media (width >= 64rem) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+    border-top: 0;
+    /* Dourado, e não filete: é o segmento que viaja com a leitura sobre a régua
+       de margem contínua (ver `log-entry`). A cor amarra ao número, que já é
+       `text-accent`. */
+    border-left: 1px solid var(--color-accent);
+    padding-top: 0;
+    padding-left: 1.25rem;
+
+    /* `align-self: start` é o que faz o `sticky` abaixo funcionar de verdade.
+       O trilho é item de grade, e item de grade estica por padrão: a caixa dele
+       tinha exatamente a altura da entrada inteira, então `sticky` não tinha
+       para onde correr e o trilho descia junto com o texto. Medido: o topo do
+       trilho acompanhava o topo da entrada em qualquer posição de rolagem, ou
+       seja, o comportamento documentado nunca aconteceu. Com a caixa do tamanho
+       do conteúdo, ele gruda em 7rem e acompanha a leitura, que é o ponto do
+       trilho de margem. */
+    align-self: start;
+    position: sticky;
+    top: 7rem;
+  }
+}
+
+/* Botões — caráter firme e tátil. A sombra responde ao estado, nunca decora. */
+@utility btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border-radius: var(--radius-sm);
+  padding: 0.9375rem 2rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.25;
+  /* Rótulos contextuais deste site são longos por decisão ("Quero me preparar
+     para a EFOMM"). Com `nowrap` eles estouravam o container em 390px. */
+  text-align: center;
+  text-wrap: balance;
+  max-width: 100%;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-out-quart),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+@utility btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
+  border: 1px solid transparent;
+
+  /* PEÇA CUNHADA. Este é o elemento mais clicado do site e é o ouro da marca,
+     que no sistema significa mérito. Era um retângulo de cor chapada.
+
+     Três camadas fazem o relevo, e nenhuma delas é brilho: um gradiente
+     vertical curtíssimo (a luz vem de cima, como em qualquer objeto físico),
+     um filete interno claro na borda de cima e um escuro na de baixo. Somados,
+     o botão lê como metal batido em vez de retângulo pintado.
+
+     NÃO É GLOW: não há desfoque colorido para fora do elemento, que é o que a
+     regra 8 veta. Tudo acontece dentro da caixa. */
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, white 12%, var(--color-primary)),
+    var(--color-primary) 58%,
+    color-mix(in oklab, black 8%, var(--color-primary))
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 34%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, black 18%, transparent),
+    var(--shadow-raise);
+
+  &:hover {
+    background-color: var(--color-primary-hover);
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in oklab, white 16%, var(--color-primary-hover)),
+      var(--color-primary-hover) 58%,
+      color-mix(in oklab, black 6%, var(--color-primary-hover))
+    );
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 40%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, black 16%, transparent),
+      var(--shadow-lift);
+    transform: translateY(-1px);
+  }
+
+  /* Pressionado, a luz INVERTE: o filete claro vai para baixo e o escuro para
+     cima, que é o que acontece quando uma peça afunda. É o mesmo gesto do
+     `translateY`, dito pela iluminação. */
+  &:active {
+    background-image: none;
+    box-shadow:
+      inset 0 2px 3px color-mix(in oklab, black 22%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, white 22%, transparent),
+      var(--shadow-press);
+    transform: translateY(1px);
+  }
+}
+
+@utility btn-secondary {
+  background-color: transparent;
+  color: var(--color-fg);
+  border: 1px solid var(--color-border-strong);
+
+  &:hover {
+    background-color: var(--color-surface-elevated);
+    border-color: var(--color-fg-muted);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@utility btn-ghost {
+  background-color: transparent;
+  color: var(--color-fg-muted);
+  border: 1px solid transparent;
+  /* Recuo lateral menor: um fantasma ao lado de um botão sólido precisa
+     alinhar-se ao texto, não repetir o padding de um botão preenchido. */
+  padding-inline: 0.5rem;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+
+  /* O fantasma não tem fundo nem borda, então no toque ele não tinha resposta
+     nenhuma: em ponteiro grosso não existe hover, e o único sinal de que o
+     controle recebeu o toque era a própria navegação acontecer. O afundar de
+     1px é o mesmo do secundário, e é o vocabulário de "peça pressionada" que o
+     primário já diz invertendo a luz do relevo. */
+  &:active {
+    color: var(--color-fg);
+    transform: translateY(1px);
+  }
+}
+
+@utility btn-sm {
+  padding: 0.6875rem 1.25rem;
+  font-size: var(--text-caption);
+}
+
+/* REMOVIDO: `card-raised`.
+   Era sombra de repouso em cartão que não é clicável, aplicada em oito lugares.
+   Contradizia a regra que o próprio sistema já tinha escrito ("só o que é alvo
+   de navegação recebe sombra") e, somada, produzia o efeito de página inteira
+   flutuando, no qual elevação deixa de significar qualquer coisa. Cartão
+   estático agora é borda + superfície; quem sobe é `card-interactive`, porque
+   ali a sombra responde a estado. */
+
+/* Campo gráfico do hero: grade de filetes construída só com tokens.
+   Existe porque não há logo SVG, fotografia nem brasão. Substituível. */
+@utility field-grid {
+  background-image:
+    linear-gradient(to right, var(--color-hairline) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  mask-image: radial-gradient(ellipse 90% 70% at 70% 40%, black, transparent 72%);
+}
+
+/* =============================================================================
+   PROFUNDIDADE — SISTEMA DE PLANOS
+   Ver DESIGN.md § Depth & Layers. A profundidade vem da COMPOSIÇÃO (planos que
+   se sobrepõem, campo que continua atrás do conteúdo, painel que atravessa a
+   costura entre seções), não de espalhar sombra em todo cartão.
+   ========================================================================== */
+
+/* Plano 1 — campo de fundo. Fica atrás de tudo e nunca disputa com o conteúdo.
+   `isolation` cria o contexto de empilhamento da seção, então os planos de uma
+   seção nunca vazam para outra. */
+@utility plano-fundo {
+  position: absolute;
+  inset: 0;
+  z-index: var(--layer-fundo);
+  pointer-events: none;
+  /* `clip`, NUNCA `hidden`. Os dois recortam igual, mas `hidden` cria um
+     container de ROLAGEM, e `animation-timeline: view()` procura o container de
+     rolagem mais próximo para saber a que ele deve se amarrar. Com `hidden`, a
+     paralaxe da grade se amarrava a esta div, que não rola nunca: a timeline
+     nascia inativa e o campo ficava parado para sempre. Medido: a `source` da
+     ViewTimeline vinha como `DIV` em vez de `HTML`. `clip` recorta sem criar
+     container, então a timeline atravessa até a janela, que é quem rola. */
+  overflow: clip;
+}
+
+/* Plano 2 — transição. Ornamento, marca d'água, filetes de grande escala. */
+@utility plano-meio {
+  position: absolute;
+  z-index: var(--layer-meio);
+  pointer-events: none;
+}
+
+/* Plano 3 — conteúdo. Precisa de z-index explícito para ficar à frente do
+   campo gráfico; sem isso o texto disputa a pilha com o fundo. */
+@utility plano-frente {
+  position: relative;
+  z-index: var(--layer-frente);
+}
+
+/* Seção que participa do sistema de planos.
+   `overflow-x: clip` e não `overflow: hidden`: corta o sangramento lateral dos
+   elementos de midground (a águia passa da borda direita e criaria scroll
+   horizontal) mas deixa o eixo Y livre, para que o painel suspenso possa
+   atravessar a costura com a seção seguinte. `hidden` forçaria o outro eixo a
+   `auto` e mataria a sobreposição. */
+@utility secao-composta {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+/* Marca d'água: a marca real em baixo contraste, no plano intermediário.
+   Opacidade baixíssima por doutrina — presença, não decoração. */
+@utility marca-dagua {
+  opacity: 0.055;
+}
+
+/* FUGA. Onde a marca d'água sangra para fora da página, a densidade cai na
+   direção da borda, em vez de a asa ser guilhotinada pelo `overflow-x: clip`
+   da seção. É a diferença entre uma marca COLADA em cima da página e uma marca
+   que passa POR BAIXO dela e continua além do corte.
+
+   SÓ ONDE O CORTE É ASSIMÉTRICO, e a precisão importa. No CTA final a águia é
+   centralizada: acima de ~500px nada nela é cortado, e abaixo disso ela é
+   cortada IGUAL dos dois lados, na ponta da asa, que é a parte que já afina
+   sozinha. Simulado em 320px, a versão com fuga dos dois lados e a chapada
+   são quase indistinguíveis. Fuga ali seria custo sem efeito, e nas larguras
+   grandes seria assimetria sem causa.
+
+   O ponto de partida em 60% é medido, não escolhido: a cabeça da águia fica em
+   torno de 63% da largura do recorte, e é ela que carrega o reconhecimento.
+   Começar antes disso apagava a identidade para resolver a borda. */
+@utility marca-fuga-direita {
+  --marca-pintura: linear-gradient(
+    to right,
+    currentColor 60%,
+    color-mix(in oklab, currentColor 25%, transparent)
+  );
+}
+
+@utility marca-fuga-esquerda {
+  --marca-pintura: linear-gradient(
+    to left,
+    currentColor 60%,
+    color-mix(in oklab, currentColor 25%, transparent)
+  );
+}
+
+/* Painel de conteúdo suspenso. É o objeto que mais comunica profundidade:
+   contato curto + difusa larga + borda que recebe luz no topo. */
+@utility painel-suspenso {
+  /* `surface-elevated`, não `surface`: em navy e ink o degrau tonal é o que
+     realmente separa o painel do fundo. A sombra reforça, não sustenta. */
+  background-color: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float), var(--shadow-inset-top);
+}
+
+/* Gradiente de profundidade: escurece a base da superfície para que o campo
+   gráfico pareça continuar atrás, em vez de terminar onde o conteúdo começa. */
+@utility campo-profundidade {
+  background-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    color-mix(in oklab, var(--color-canvas-alt) 70%, transparent),
+    transparent 70%
+  );
+}
+
+/* Numeral de registro: o número da entrada repetido em escala grande, no plano
+   intermediário, atrás do início do conteúdo. Ele é o que dá distância entre o
+   campo e o texto nas seções de leitura, onde um cartão ou uma sombra seriam
+   ruído. Herda `--color-fg`, então funciona nas três superfícies.
+   Só existe a partir de lg: no mobile competiria com a leitura. */
+@utility numeral-registro {
+  display: none;
+
+  @media (width >= 64rem) {
+    display: block;
+    position: absolute;
+    z-index: var(--layer-meio);
+    top: -2.75rem;
+    left: -3.5rem;
+    font-family: var(--font-display);
+    font-size: 11rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-fg);
+    opacity: 0.045;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+/* FUGA DO NUMERAL. A densidade cai da cabeça para a base, então o número lê como
+   afundando no papel atrás do texto, em vez de estar impresso por cima dele.
+
+   Vale por dois motivos, e o segundo é o que decide. O primeiro é material: uma
+   marca de registro no papel não tem tinta uniforme. O segundo é de contraste:
+   a metade de baixo do numeral é exatamente onde o texto o cruza, porque ele
+   começa 2,75rem ACIMA do conteúdo. Tirar tinta ali só pode melhorar o pior par
+   medido (4,62:1), nunca piorá-lo. A metade de cima, que fica na margem vazia,
+   mantém a densidade de sempre.
+
+   POR MÁSCARA, E NÃO POR `background-clip: text`. A primeira versão pintava o
+   texto com um gradiente recortado, e o CSS COMPILADO mostrou o defeito: o
+   Lightning precisa emitir um fallback para `color-mix`, e para isso resolveu
+   `var(--color-fg)` no `:root`, congelando NAVY dentro do gradiente. O numeral
+   vive nas três superfícies, então em navy e ink o fallback desbotaria para a
+   cor errada. A máscara não pinta nada: ela só remove alfa, então a cor continua
+   vindo de `color: var(--color-fg)` e resolve no elemento, como manda a D-34.
+
+   De quebra, some o `color: transparent` (que faria `currentColor` resolver para
+   transparente ali dentro) e some a necessidade de `@supports`: navegador que
+   não entende a máscara mostra o numeral chapado, que é o de hoje.
+
+   O que NÃO entrou, e foi tentado: baixo-relevo (luz em cima, sombra embaixo).
+   Renderizado no tamanho real, vira contorno vazado: perde a massa que faz o
+   numeral funcionar como peso de margem e ganha duas sombras atrás de texto.
+   Ver a Regra da Área em `DESIGN.md`. */
+@media (width >= 64rem) {
+  .numeral-registro {
+    -webkit-mask-image: linear-gradient(to bottom, #000 30%, #0003);
+    mask-image: linear-gradient(to bottom, #000 30%, #0003);
+  }
+}
+
+/* =============================================================================
+   HEADER — CAMADA PRÓPRIA
+   O problema anterior: o header usava `canvas`, o mesmo navy do hero, então se
+   fundia com a abertura e a navegação parecia perdida dentro dela. A correção é
+   composicional, não `background + box-shadow`: o header ganha uma superfície
+   MAIS ESCURA que o conteúdo (degrau tonal), um filete de luz no topo e um
+   filete de sombra na base. Ele lê como uma faixa apoiada sobre a página.
+   Nada de blur: glassmorphism está vetado na direção da marca.
+   ========================================================================== */
+
+/* Estado no topo: integrado à abertura, mas já identificável pelo degrau tonal. */
+@utility header-topo {
+  background-color: var(--color-canvas-alt);
+  box-shadow:
+    var(--shadow-inset-top),
+    0 1px 0 var(--color-hairline);
+}
+
+/* Estado após rolar: mais presente como interface. Mesma superfície, elevação
+   real e a base ganha peso. A altura comprime, o que é o sinal mais legível de
+   "isto é a barra de navegação, não a página". */
+@utility header-rolado {
+  background-color: var(--color-canvas-alt);
+  box-shadow:
+    var(--shadow-inset-top),
+    0 1px 0 var(--color-border),
+    var(--shadow-raise);
+}
+
+/* Marcador de item ativo: um filete que corre sob o rótulo, no vocabulário de
+   trilho do Diário de Bordo. Cresce da esquerda, como uma marcação feita à
+   régua. No hover ele aparece apagado, então o alvo responde antes do clique. */
+@utility marcador-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.375rem;
+  height: 2px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition:
+    transform var(--duration-base) var(--ease-out-quart),
+    opacity var(--duration-fast) var(--ease-standard);
+}
+
+@utility marcador-nav-ativo {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+@utility marcador-nav-hover {
+  transform: scaleX(1);
+  opacity: 0.35;
+}
+
+/* Transição de rota: entrada curta do conteúdo ao trocar de página. É o que
+   evita a sensação de corte seco entre as áreas do site. Curta de propósito:
+   navegação continua rápida, e `prefers-reduced-motion` desliga o deslocamento.
+
+   SÓ TRANSFORM, NUNCA OPACIDADE, E ISSO É A PARTE IMPORTANTE. A primeira versão
+   fazia `from { opacity: 0 }`. Medido num navegador real com a renderização
+   suspensa (janela atrás de outra): `animationPlayState: running`,
+   `currentTime: 0`, `opacity: 0` — a página inteira invisível esperando um
+   quadro que não vinha. Trocar o `fill-mode` não resolve: com a animação já na
+   fase ativa, o keyframe vale de qualquer jeito. É o mesmo defeito da D-21, só
+   que por CSS em vez de por JS, e a lição é a mesma: o conteúdo não pode
+   depender de um quadro de animação para existir.
+   Animando só o deslocamento, o pior caso possível é uma página 14px mais
+   baixa. Ninguém perde texto por causa de uma transição de rota. */
+@utility transicao-rota {
+  animation: pp-entrada-rota var(--duration-slow) var(--ease-out-quart);
+}
+
+@keyframes pp-entrada-rota {
+  from {
+    transform: translateY(var(--motion-rise));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transicao-rota {
+    animation: none;
+  }
+}
+
+/* Entrada escalonada dos itens do menu mobile. O painel inteiro já entra como
+   um bloco; o escalonamento faz os seis itens chegarem na ordem em que serão
+   lidos, o que é a diferença entre "uma tela apareceu" e "uma lista se abriu".
+   Curto de propósito: o último item chega 300ms depois do primeiro, então nada
+   fica esperando movimento para poder ser tocado.
+   Não precisa de guarda `scripting: enabled`: este painel só existe quando há
+   JavaScript, porque quem o abre é um botão. */
+.entrada-item-menu {
+  /* `backwards` e não `both`: o atraso do escalonamento precisa segurar o item
+     no estado inicial ANTES de animar, senão os seis piscam juntos e só depois
+     se escalonam. Depois da animação o item volta ao estilo normal, que já é o
+     estado final, então não fica preso em nenhum valor de keyframe.
+
+     Sem opacidade, pela mesma razão do painel que os contém: com a renderização
+     suspensa, `opacity: 0` mais `backwards` deixaria os seis itens invisíveis
+     por tempo indeterminado. O escalonamento continua legível só no
+     deslocamento, que é o que dá a sensação de lista se abrindo. */
+  animation: pp-entrada-item var(--duration-base) var(--ease-out-quart) backwards;
+  animation-delay: calc(var(--motion-stagger) * var(--pp-i, 0));
+}
+
+@keyframes pp-entrada-item {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada-item-menu {
+    animation: none;
+  }
+}
+
+/* =============================================================================
+   PARALAXE ENTRE PLANOS — a profundidade em movimento
+   ============================================================================
+   O sistema de planos já dizia o que está na frente do quê. Parado, porém, ele
+   depende de opacidade e de sobreposição para comunicar isso. Em movimento a
+   leitura fica inequívoca: enquanto a seção atravessa a janela, o campo de fundo
+   percorre 40px, a marca d'água percorre 120px e o conteúdo não percorre nada.
+   Essa DIFERENÇA de curso é o cue de profundidade mais forte que existe depois
+   da oclusão, e é exatamente o que faltava.
+
+   ZERO JAVASCRIPT. `animation-timeline: view()` amarra a animação à posição do
+   elemento na janela, nativamente. Nada de listener de scroll, nada de rAF,
+   nada de biblioteca, e o trabalho fica na thread do compositor.
+
+   TRÊS PORTAS ANTES DE QUALQUER COISA SE MOVER:
+   1. `@supports (animation-timeline: view())` — sem suporte (Safari e Firefox
+      hoje), a regra inteira nem existe. Isto é obrigatório e não é detalhe: sem
+      a guarda, o navegador ignoraria só a linha do `animation-timeline` e
+      rodaria a animação na linha do tempo do DOCUMENTO, ou seja, todos os
+      elementos deslizariam uma vez no carregamento e parariam no lugar errado.
+   2. `prefers-reduced-motion: no-preference` — quem pede menos movimento não
+      recebe nenhum.
+   3. Só plano de fundo e plano intermediário. O plano de conteúdo nunca entra:
+      texto que anda sozinho durante a leitura é defeito, não profundidade.
+   ========================================================================== */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .parallax-fundo,
+    .parallax-meio,
+    .parallax-marca,
+    .parallax-contra {
+      animation: pp-parallax linear both;
+      animation-timeline: view();
+      /* `cover` = da entrada à saída completa do elemento pela janela, então o
+         curso é distribuído por toda a passagem da seção e nunca termina cedo. */
+      animation-range: cover 0% cover 100%;
+      will-change: transform;
+    }
+
+    .parallax-fundo {
+      --pp-curso: var(--parallax-fundo);
+    }
+    .parallax-meio {
+      --pp-curso: var(--parallax-meio);
+    }
+    .parallax-marca {
+      --pp-curso: var(--parallax-marca);
+    }
+    /* Curso negativo: sobe enquanto os outros descem. Usado no numeral de
+       registro, que assim se separa do texto que ele acompanha em vez de
+       viajar junto e continuar parecendo colado. */
+    .parallax-contra {
+      --pp-curso: var(--parallax-contra);
+    }
+  }
+}
+
+@keyframes pp-parallax {
+  from {
+    transform: translate3d(0, calc(var(--pp-curso) * -0.5), 0);
+  }
+  to {
+    transform: translate3d(0, calc(var(--pp-curso) * 0.5), 0);
+  }
+}
+
+/* NÃO existe variante "centrada", e a tentativa de criar uma foi um bug.
+   O raciocínio errado era: "o elemento já está centrado por `translateX(-50%)`,
+   então o keyframe precisa repetir esse -50% para não sobrescrevê-lo". Só que o
+   Tailwind v4 centraliza pela propriedade `translate`, não por `transform`:
+   `-translate-x-1/2` compila para `translate: calc(1/2 * 100% * -1)`.
+   `translate` e `transform` são propriedades independentes e SE SOMAM, então o
+   -50% do keyframe entrava por cima do -50% do Tailwind e a marca ficava
+   deslocada 100% da própria largura para a esquerda. Visível a olho nu.
+   `pp-parallax` sozinho já convive com qualquer centralização feita por
+   `translate`. */
+
+/* Plano da FRENTE com curso negativo: anda contra a rolagem, então parece vir
+   na direção de quem lê. É o outro extremo do campo de fundo, e é o que fecha a
+   escala de profundidade: fundo 40px a favor, marca 120px a favor, conteúdo
+   parado, painel 32px contra.
+   Só para bloco curto e sem leitura corrida. Parágrafo NUNCA recebe isto. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .parallax-frente {
+      animation: pp-parallax linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+      --pp-curso: var(--parallax-frente);
+      will-change: transform;
+    }
+  }
+}
+
+/* =============================================================================
+   ENTRADA DO HERO
+   O hero é a única coisa que já está na tela quando a página abre, então nunca
+   teve entrada: qualquer reveal por scroll chegaria tarde demais.
+
+   SÓ `transform`, NUNCA `opacity` (D-39). Se o navegador adiar o primeiro
+   quadro, o pior caso é o hero nascer 18px mais baixo e assentar. Nenhuma
+   palavra fica invisível esperando animação, que é a regra que vale para tudo
+   acima da dobra.
+   ========================================================================== */
+.entrada-hero > * {
+  animation: pp-assenta var(--duration-slow) var(--ease-out-quart);
+  animation-delay: calc(var(--motion-stagger) * var(--pp-i, 0));
+}
+
+@keyframes pp-assenta {
+  from {
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* O MESMO ASSENTAR, NO BLOCO INTEIRO.
+   O hero escalona filhos porque são quatro blocos em ordem de leitura. Aqui o
+   alvo é um bloco só que ENTRA: o resultado do diagnóstico, que é o único lugar
+   do site onde conteúdo aparece em resposta a uma ação.
+
+   Não é enfeite. Sem movimento, trocar uma resposta reescrevia o resultado no
+   mesmo lugar, em silêncio, e nada dizia que a página tinha respondido. Quem
+   está lendo o resultado não olha para o losango que acabou de marcar.
+
+   Mesmo `transform` puro da D-39: se o quadro atrasar, o resultado nasce 18px
+   mais baixo. Nenhuma palavra depende da animação para existir. */
+.assenta {
+  animation: pp-assenta var(--duration-slow) var(--ease-out-quart);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada-hero > *,
+  .assenta {
+    animation: none;
+  }
+}
+
+/* =============================================================================
+   LINHA DE LEITURA
+   Filete de 2px na base do header que cresce com a posição na página. Não é
+   enfeite: as páginas deste site são longas e a linha responde "quanto falta",
+   que é a pergunta que se faz rolando um documento. É o mesmo vocabulário do
+   marcador de item ativo, aplicado ao eixo vertical.
+
+   `animation-timeline: scroll(root block)` amarra o filete à barra de rolagem do
+   documento, sem JavaScript. Sem suporte, ele simplesmente não existe: nada
+   aparece parado ou pela metade, porque a guarda cobre a declaração inteira.
+
+   Não é desligado por `prefers-reduced-motion`: ele não se move sozinho, só
+   reflete o que a pessoa já está fazendo. Desligá-lo removeria informação, não
+   movimento.
+   ========================================================================== */
+@supports (animation-timeline: scroll(root block)) {
+  .linha-leitura {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 2px;
+    background-color: var(--color-accent);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: pp-progresso linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes pp-progresso {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* =============================================================================
+   MICRO-INTERAÇÕES
+   ========================================================================== */
+
+/* Link inline: o filete se desenha da esquerda no hover, em vez de o texto só
+   trocar de cor. Mesma marcação à régua do marcador de navegação, na escala do
+   parágrafo. `currentColor` para servir às três superfícies. */
+@utility link-filete {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.25rem;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+
+  /* `:active` junto porque em ponteiro grosso NÃO EXISTE hover: sem ele, um
+     link de texto tocado no celular não dava sinal nenhum de ter recebido o
+     toque, e o site é aberto majoritariamente no celular (regra 10). O filete
+     que já é a resposta do ponteiro passa a ser também a resposta do dedo. */
+  &:hover::after,
+  &:focus-visible::after,
+  &:active::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Linha de registro clicável ou com ação: o conteúdo desliza um fio para a
+   direita, como quem puxa a ficha para fora do fichário. Deslocamento pequeno
+   de propósito, porque o alvo é a linha inteira e nada pode saltar sob o dedo. */
+@utility linha-registro {
+  transition: background-color var(--duration-base) var(--ease-out-quart);
+
+  & > * {
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+
+  &:hover {
+    background-color: var(--color-surface-sunken);
+  }
+
+  &:hover > * {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linha-registro > *,
+  .link-filete::after {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+   MÁSCARAS DA MARCA
+   ============================================================================
+   A marca é máscara alfa pintada por `currentColor` (D-33). A URL da máscara
+   saiu do `style` inline do componente e veio para cá por peso: as quatro
+   máscaras somam 190KB de PNG, o segundo maior item da página depois das
+   fontes, e em AVIF somam 54KB.
+
+   POR QUE `@supports` E NÃO CASCATA. A forma óbvia de servir os dois formatos é
+   declarar o PNG e sobrescrever com `image-set()`, deixando o navegador antigo
+   ficar com a primeira. Foi o que se tentou primeiro, e NÃO FUNCIONA neste
+   projeto: o Lightning CSS, que compila o Tailwind v4, considera a primeira
+   declaração redundante e a APAGA. Verificado no CSS compilado, sobrava só a
+   `image-set`.
+
+   E o modo de falhar é feio: o elemento é pintado com `background-color:
+   currentColor`, então sem `mask-image` nenhuma o que aparece no lugar da marca
+   é um RETÂNGULO SÓLIDO da cor do texto. Um Safari 16, que entende `mask-image`
+   mas não entende `type()` dentro de `image-set()`, cairia exatamente nisso.
+
+   `@supports` resolve porque o compilador não pode colapsar regras que estão em
+   contextos condicionais diferentes: o PNG fica na regra base, e o AVIF só entra
+   onde o navegador confirma que sabe ler a sintaxe inteira.
+   ========================================================================== */
+
+@utility mascara-marca {
+  /* A pintura é um GRADIENTE, mesmo quando é chapada, e não um
+     `background-color`. Motivo: `background-image` é desenhado POR CIMA do
+     `background-color`, então uma pintura com parte transparente deixaria a cor
+     chapada aparecer por baixo e a fuga não existiria. Com a cor saindo do
+     mesmo lugar da variação, `--marca-pintura` troca a pintura inteira.
+
+     O padrão é o chapado de sempre, então nada muda para quem não pede fuga. */
+  background-image: var(--marca-pintura, linear-gradient(currentColor 0 100%));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@utility marca-fonte-completa {
+  -webkit-mask-image: url("/assets/brand/logo/marca-completa.png");
+  mask-image: url("/assets/brand/logo/marca-completa.png");
+}
+
+@utility marca-fonte-aguia {
+  -webkit-mask-image: url("/assets/brand/logo/marca-aguia.png");
+  mask-image: url("/assets/brand/logo/marca-aguia.png");
+}
+
+@utility marca-fonte-wordmark {
+  -webkit-mask-image: url("/assets/brand/logo/marca-wordmark.png");
+  mask-image: url("/assets/brand/logo/marca-wordmark.png");
+}
+
+/* RESERVADA. O livro nunca é usado sozinho (ver Wordmark.tsx). A classe existe
+   para o mapa de variações continuar completo e verificável, não para uso. */
+@utility marca-fonte-livro {
+  -webkit-mask-image: url("/assets/brand/logo/marca-livro.png");
+  mask-image: url("/assets/brand/logo/marca-livro.png");
+}
+
+/* O AVIF, só onde o navegador confirma que entende a sintaxe inteira. Fora
+   daqui, a regra base acima já garantiu o PNG. */
+@supports (
+  mask-image: image-set(
+      url("/assets/brand/logo/marca-aguia.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-aguia.png") type("image/png")
+    )
+) {
+  .marca-fonte-completa {
+    -webkit-mask-image: image-set(
+      url("/assets/brand/logo/marca-completa.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-completa.png") type("image/png")
+    );
+    mask-image: image-set(
+      url("/assets/brand/logo/marca-completa.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-completa.png") type("image/png")
+    );
+  }
+
+  .marca-fonte-aguia {
+    -webkit-mask-image: image-set(
+      url("/assets/brand/logo/marca-aguia.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-aguia.png") type("image/png")
+    );
+    mask-image: image-set(
+      url("/assets/brand/logo/marca-aguia.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-aguia.png") type("image/png")
+    );
+  }
+
+  .marca-fonte-wordmark {
+    -webkit-mask-image: image-set(
+      url("/assets/brand/logo/marca-wordmark.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-wordmark.png") type("image/png")
+    );
+    mask-image: image-set(
+      url("/assets/brand/logo/marca-wordmark.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-wordmark.png") type("image/png")
+    );
+  }
+
+  .marca-fonte-livro {
+    -webkit-mask-image: image-set(
+      url("/assets/brand/logo/marca-livro.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-livro.png") type("image/png")
+    );
+    mask-image: image-set(
+      url("/assets/brand/logo/marca-livro.avif") type("image/avif"),
+      url("/assets/brand/logo/marca-livro.png") type("image/png")
+    );
+  }
+}
+
+/* =============================================================================
+   PAINEL DO MENU MOBILE
+   ============================================================================
+   A entrada é CSS. Antes era `motion` com `AnimatePresence`, e essa era a ÚNICA
+   coisa no projeto que ainda usava a biblioteca: 46KB comprimidos baixados em
+   toda página, medidos na build de produção, por causa de uma animação de menu.
+   Num site que declara atender conexão lenta e aparelho modesto, isso não se
+   sustenta. A doutrina do projeto já era essa desde a D-21; aqui ela terminou
+   de valer.
+
+   NÃO HÁ ANIMAÇÃO DE SAÍDA, e é troca consciente. Manter a saída exigia manter
+   o elemento montado depois do fim da intenção, e é exatamente esse detalhe que
+   pedia a biblioteca. Fechar na hora é o que menu nativo faz, e lê como
+   resposta, não como corte.
+
+   SÓ DESLOCAMENTO, SEM OPACIDADE, como todo o resto (regra 18). A primeira
+   versão disto partia de `opacity: 0`, com a justificativa de que o painel só
+   existe depois de um clique e portanto teria JavaScript e quadros garantidos.
+   **A justificativa estava errada**, e foi medida: num navegador com a
+   renderização suspensa o painel abriu com `animationPlayState: "running"`,
+   `opacity: 0`, e ficou assim. Ter JavaScript não garante quadro de animação.
+   Com deslocamento apenas, o pior caso é o painel nascer 8px acima e assentar.
+   ========================================================================== */
+.painel-menu {
+  animation: pp-painel-entra var(--duration-base) var(--ease-out-quart);
+}
+
+@keyframes pp-painel-entra {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-menu {
+    animation: none;
+  }
+}
+
+/* =============================================================================
+   COSTURA ENTRE SUPERFÍCIES
+   ============================================================================
+   Onde duas superfícies diferentes se encontram, havia só uma troca abrupta de
+   cor. Agora a folha de cima projeta na de baixo: um filete na borda superior
+   da seção que recebe, mais uma sombra curta e interna logo abaixo dele.
+
+   É o mesmo raciocínio do resto da profundidade do projeto (regra 16): o efeito
+   vem da composição, de duas folhas empilhadas, e não de `box-shadow` decorando
+   um bloco. E a superfície que RECEBE é quem define a cor da projeção, porque
+   sombra tingida de navy sobre navy é invisível (D-34).
+
+   As seis combinações estão escritas uma a uma de propósito. CSS não compara o
+   valor de um atributo entre irmãos, então `[data-surface] + [data-surface]`
+   pegaria também bone depois de bone, que é a MESMA folha: costura ali seria uma
+   linha no meio do papel. */
+[data-surface="navy"] + [data-surface="bone"],
+[data-surface="ink"] + [data-surface="bone"],
+[data-surface="bone"] + [data-surface="navy"],
+[data-surface="ink"] + [data-surface="navy"],
+[data-surface="bone"] + [data-surface="ink"],
+[data-surface="navy"] + [data-surface="ink"],
+/* O rodapé entra por seletor próprio porque ele NÃO é irmão das seções: elas
+   vivem dentro de `<main>` e ele fica fora, então o seletor de irmão adjacente
+   não enxerga essa costura. Medido: era a única das cinco transições da Home que
+   ficava sem. Incondicional porque o rodapé é a única superfície `ink` da página,
+   e portanto sempre sucede uma superfície diferente da dele. */
+footer[data-surface] {
+  /* O `spread` negativo era -16px e apagava a sombra quase por completo:
+     simulada com os valores reais, a costura sumia e a transição virava só uma
+     troca de cor. -8px deixa a projeção alcançar uns 20px, que é onde ela lê
+     como folha sobre folha sem virar barra escura. */
+  box-shadow:
+    inset 0 1px 0 var(--costura-linha),
+    inset 0 10px 18px -8px var(--costura-sombra);
+}
+
+/* Guia de leitura da tabela comparativa. Ela tem seis colunas, e acompanhar uma
+   linha até o fim numa tela larga é justamente onde se perde o dedo. O realce
+   usa a cor de contexto daquele concurso, então além de guiar ele diz de qual
+   escola é a linha que está sob o ponteiro.
+
+   Alfa baixíssimo e SEM mudança de cursor, de propósito: a linha inteira não é
+   clicável (só a sigla é um link), e um realce forte prometeria um alvo que não
+   existe. Isto é apoio de leitura, não afordância. */
+@utility linha-tabela {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+
+  &:hover {
+    background-color: color-mix(in oklab, var(--concurso) 9%, transparent);
+  }
+}

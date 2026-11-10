@@ -1,0 +1,24 @@
+# Normalização de fim de linha.
+#
+# `core.autocrlf=true` estava trocando LF por CRLF em todo checkout nesta
+# máquina, e o Prettier usa LF por padrão. Consequência: qualquer arquivo
+# restaurado com `git checkout` passava a reprovar no `format:check` sem que
+# nada de fato tivesse mudado, e todo commit vinha acompanhado de um punhado de
+# avisos "LF will be replaced by CRLF".
+#
+# `eol=lf` resolve na origem: o repositório guarda LF e a cópia de trabalho
+# recebe LF, em qualquer sistema. É o mesmo que o Prettier, o ESLint e o Next
+# esperam.
+* text=auto eol=lf
+
+# Binários: nunca tocar.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
